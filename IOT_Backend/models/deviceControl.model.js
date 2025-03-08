@@ -12,6 +12,4 @@ const DeviceControl = sequelize.define(
   { tableName: "devicecontrols", timestamps: true }
 );
 
-DeviceControl.belongsTo(Device, { foreignKey: "deviceId", as: "device" });
-
 module.exports = DeviceControl;

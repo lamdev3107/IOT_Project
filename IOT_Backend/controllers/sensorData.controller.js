@@ -66,7 +66,6 @@ const getAllSensorData = async (req, res, next) => {
 };
 const getLatestSensorData = async (req, res, next) => {
   try {
-    // const devices = ["ac", "fan", "light"];
     const latestData = await SensorData.findOne({
       order: [["createdAt", "DESC"]],
     });

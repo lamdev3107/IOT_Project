@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../config/database");
+const DeviceControl = require("./deviceControl.model");
 
 const Device = sequelize.define(
   "Device",
@@ -10,5 +11,7 @@ const Device = sequelize.define(
   },
   { timestamps: true }
 );
+Device.hasMany(DeviceControl, { foreignKey: "deviceId" });
+DeviceControl.belongsTo(Device, { foreignKey: "deviceId", as: "device" });
 
 module.exports = Device;

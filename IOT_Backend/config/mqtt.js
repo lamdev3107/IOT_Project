@@ -3,9 +3,10 @@ const SensorData = require("../models/sensorData.model");
 
 require("dotenv").config();
 const MQTT_BROKER = process.env.MQTT_BROKER;
+const MQTT_PORT = process.env.MQTT_PORT;
 const MQTT_USERNAME = process.env.MQTT_USERNAME;
 const MQTT_PASSWORD = process.env.MQTT_PASSWORD;
-const MQTT_TOPIC_SENSOR = "sensor/data";
+const MQTT_TOPIC_SENSOR = process.env.MQTT_TOPIC_SENSOR;
 
 if (!MQTT_BROKER) {
   console.error("❌ Lỗi: MQTT_BROKER chưa được thiết lập trong .env");
@@ -13,16 +14,17 @@ if (!MQTT_BROKER) {
 }
 
 const options = {
-  username: "lam_tran",
-  password: "lamtran1102",
+  username: MQTT_USERNAME,
+  password: MQTT_PASSWORD,
+  port: MQTT_PORT,
 };
 
 export const mqttClient = mqtt.connect(MQTT_BROKER, options);
 
 mqttClient.on("connect", () => {
   console.log(`🔗 Connected to MQTT Broker at ${MQTT_BROKER}`);
-  mqttClient.subscribe("sensor/data", (err) => {
-    if (!err) console.log(`📡 Subscribed to topic: ${"sensor/data"}`);
+  mqttClient.subscribe(MQTT_TOPIC_SENSOR, (err) => {
+    if (!err) console.log(`📡 Subscribed to topic: ${MQTT_TOPIC_SENSOR}`);
   });
 
   // Gửi tin nhắn kiểm tra
@@ -36,9 +38,10 @@ mqttClient.on("connect", () => {
 });
 
 mqttClient.on("message", async (topic, message) => {
+  // console.log(`📩 Received message on ${topic}: ${message.toString()}`);
+
   if (topic === "sensor/data") {
     try {
-      // console.log(`📩 Received message on ${topic}: ${message.toString()}`);
       // const data = JSON.parse(message.toString());
       // await SensorData.create({
       //   sensor: "Cảm biến môi trường",
@@ -46,16 +49,11 @@ mqttClient.on("message", async (topic, message) => {
       //   humidity: data.humid,
       //   light: data.light,
       // });
-      console.log("Save sensor data to DB");
+      // console.log("Save sensor data to DB");
     } catch (error) {
       console.error("Error saving data:", error);
     }
   }
-});
-
-// Xử lý khi nhận được tin nhắn từ MQTT
-mqttClient.on("message", (topic, message) => {
-  // console.log(`📩 Received message: ${topic} => ${message.toString()}`);
 });
 
 // Xử lý lỗi kết nối

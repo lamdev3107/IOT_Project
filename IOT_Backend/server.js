@@ -8,6 +8,7 @@ const sequelize = require("./config/database");
 const deviceRoutes = require("./routes/device.route");
 const sensorDataRoutes = require("./routes/sensorData.route");
 const deviceControlRoutes = require("./routes/deviceControl.route");
+const authRoutes = require("./routes/auth.route");
 const { default: connectDatabase } = require("./config/database");
 const {
   errorHandlingMiddleware,
@@ -33,6 +34,7 @@ app.use(
 
 // Routes
 app.use("/api/devices", deviceRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api/sensor-datas", sensorDataRoutes);
 app.use("/api/device-controls", deviceControlRoutes);
 

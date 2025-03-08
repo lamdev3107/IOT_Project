@@ -5,15 +5,18 @@ import moment from "moment-timezone";
 
 export const controlDevices = async (req, res, next) => {
   try {
-    const { led, fan, ac } = req.body;
-    // console.log("reqbody", req.body);
+    const { led, fan, ac, speaker } = req.body;
     // Kiểm tra dữ liệu đầu vào
-    if (led === undefined && fan === undefined && ac === undefined) {
+    if (
+      led === undefined &&
+      fan === undefined &&
+      ac === undefined &&
+      speaker === undefined
+    ) {
       return res.status(400).json({ message: "Missing parameters" });
     }
 
     let newDeviceControl = {};
-
     Object.entries(req.body).forEach(async ([key, value]) => {
       const device = await Device.findOne({ where: { type: key }, raw: true });
       const vietnamTime = moment()
@@ -24,7 +27,6 @@ export const controlDevices = async (req, res, next) => {
       newDeviceControl.createdAt = vietnamTime;
       newDeviceControl.updatedAt = vietnamTime;
       await DeviceControl.create(newDeviceControl);
-
       // Publish dữ liệu qua MQTT
       mqttClient.publish(`device/${device.type}`, `${value}`, {
         qos: 1,
